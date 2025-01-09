@@ -175,9 +175,9 @@ public class BinaryRepresentation implements Iterable<Bit> {
         String binaryNumber = "";
         Iterator<Bit> iterator = bits.iterator();
         while (iterator.hasNext()){
-            binaryNumber += iterator.next().toString();
+            binaryNumber = iterator.next().toString() + binaryNumber;
         }
-        binaryNumber = new StringBuilder(binaryNumber).reverse().toString();
+        //binaryNumber = new StringBuilder(binaryNumber).reverse().toString();
         binaryNumber = "<" + binaryNumber + ">";
         return binaryNumber;
     }

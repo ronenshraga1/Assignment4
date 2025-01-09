@@ -1,3 +1,5 @@
+import java.util.Iterator;
+
 public class BinaryNumber implements Comparable<BinaryNumber> {
     final private BinaryRepresentation rep;
 
@@ -5,7 +7,33 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
     // Assumes n is non-negative
     // Initializes a BinaryNumber representing n
     public BinaryNumber(int n) {
-        throw new UnsupportedOperationException("Delete this line and implement the method.");
+        if(n<0){
+            throw new IllegalArgumentException("not valid number");
+        }
+    BinaryRepresentation newBinary = new BinaryRepresentation();
+        int length =  calculateLog(n);
+        int number = (1 << (length - 1));
+        if(n==0){
+            length =1;
+        }
+        for(int i =0;i<length;i++){
+            if(n>=number){
+                newBinary.addFirst(Bit.ONE);
+                n = n -(int)number;
+            } else{
+                newBinary.addFirst(Bit.ZERO);
+            }
+            number = number/2;
+        }
+        this.rep = newBinary;
+    }
+    private int calculateLog(int value){
+        int count = 0;
+        while (value>0){
+            value /= 2;
+            count++;
+        }
+        return count + 1;
     }
 
     // Assumes other is a non-null BinaryNumber
@@ -25,7 +53,36 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
     // Assumes other is non-null BinaryNumber
     // Returns a new BinaryNumber containing the result of the addition of other to this (i.e. this + other)
     public BinaryNumber add(BinaryNumber other) {
-        throw new UnsupportedOperationException("Delete this line and implement the method.");
+        if(other == null){
+            throw new IllegalArgumentException("not valid argument");
+        }
+        BinaryNumber b1 = new BinaryNumber(0);
+        //b1.rep.padding(this.rep.length()+other.rep.length());
+        int i =0;
+        Iterator<Bit> iterator1 = this.rep.iterator();
+        Iterator<Bit> iterator2 = other.rep.iterator();
+        //Iterator<Bit> sumbit = b1.rep.iterator();
+        Bit carry = Bit.ZERO;
+        while ((iterator1.hasNext() || iterator2.hasNext())){
+            Bit item1 = Bit.ZERO;
+            Bit item2 = Bit.ZERO;
+            if(iterator1.hasNext()){
+                item1 = iterator1.next();
+            }
+            if(iterator2.hasNext()){
+                item2 = iterator2.next();
+            }
+            Bit sum = Bit.fullAdderSum(item1,item2,carry);
+            carry = Bit.fullAdderCarry(item1,item2,carry);
+            if(!iterator1.hasNext() && !iterator2.hasNext()){
+
+            }
+            b1.rep.addFirst(sum);
+            //b1.rep.removeLast();
+            i++;
+        }
+        b1.rep.reduce();
+        return b1;
     }
 
 
@@ -74,16 +131,36 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
     // Returns the represention of this BinaryNumber as a binary string, that is, all the chars are either 0 or 1
     public String toString() {
         if (!isLegal()) {
-            throw new IllegalArgumentException("Illegal Number");
+            throw new IllegalArgumentException("not legal.");
         }
-
-        throw new UnsupportedOperationException("Delete this line and implement the method.");
+        String binaryNumber = "";
+        Iterator<Bit> iterator = rep.iterator();
+        while (iterator.hasNext()){
+            binaryNumber = iterator.next().toString() + binaryNumber;
+        }
+        return binaryNumber;
     }
 
     // Task 2.3
     // Returns true if and only if this and other represent the same number
     public boolean equals(Object other) {
-        return super.equals(other); // This is the default implementation of equals
+        boolean isEqual = false;
+        if(other instanceof BinaryNumber){
+            isEqual = true;
+            Iterator iterator1 = this.rep.iterator();
+
+            Iterator iterator2 = ((BinaryNumber) other).rep.iterator();
+            if(this.rep.length() != ((BinaryNumber) other).rep.length()){
+                isEqual = false;
+            }
+            while (iterator1.hasNext() && iterator2.hasNext() && isEqual){
+                if(!iterator1.next().equals(iterator2.next())){
+                    isEqual = false;
+                }
+            }
+        }
+        return  isEqual;
+        //return super.equals(other); // This is the default implementation of equals
     }
 
     // Task 2.8
