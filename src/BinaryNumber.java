@@ -59,10 +59,17 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
         BinaryNumber b1 = new BinaryNumber(0);
         //b1.rep.padding(this.rep.length()+other.rep.length());
         int i =0;
-        Iterator<Bit> iterator1 = this.rep.iterator();
-        Iterator<Bit> iterator2 = other.rep.iterator();
         //Iterator<Bit> sumbit = b1.rep.iterator();
         Bit carry = Bit.ZERO;
+        Bit sum = Bit.ZERO;
+        if(this.rep.length()>other.rep.length()){
+            other.rep.padding(this.rep.length());
+        } else if (other.rep.length()>this.rep.length()){
+            this.rep.padding(other.rep.length());
+        }
+        Iterator<Bit> iterator1 = this.rep.iterator();
+        Iterator<Bit> iterator2 = other.rep.iterator();
+
         while ((iterator1.hasNext() || iterator2.hasNext())){
             Bit item1 = Bit.ZERO;
             Bit item2 = Bit.ZERO;
@@ -72,14 +79,17 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
             if(iterator2.hasNext()){
                 item2 = iterator2.next();
             }
-            Bit sum = Bit.fullAdderSum(item1,item2,carry);
+            sum = Bit.fullAdderSum(item1,item2,carry);
             carry = Bit.fullAdderCarry(item1,item2,carry);
-            if(!iterator1.hasNext() && !iterator2.hasNext()){
-
-            }
-            b1.rep.addFirst(sum);
+            b1.rep.addLast(sum);
             //b1.rep.removeLast();
             i++;
+        }
+        b1.rep.removeFirst();
+        if(sum == Bit.ONE){
+            b1.rep.addLast(Bit.ONE);
+        } else{
+            b1.rep.addLast(Bit.ZERO);
         }
         b1.rep.reduce();
         return b1;
@@ -89,7 +99,19 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
     // Task 2.5
     // Returns a new BinaryNumber that represents the Additive Inverse of this, that is, if this equals X, the return value is -X
     public BinaryNumber negate() {
-        throw new UnsupportedOperationException("Delete this line and implement the method.");
+        BinaryNumber complement = new BinaryNumber(this);
+        complement.rep.complement();
+        Iterator<Bit> iterator = complement.rep.iterator();
+        Bit carry = Bit.ONE;
+        BinaryNumber newNumber = new BinaryNumber(0);
+        while (iterator.hasNext()){
+            Bit bit = iterator.next();
+            Bit sum = Bit.fullAdderSum(bit,Bit.ZERO,carry);
+            carry = Bit.fullAdderCarry(bit,Bit.ZERO,carry);
+            newNumber.rep.addLast(sum);
+        }
+        newNumber.rep.removeFirst();
+        return newNumber;
     }
 
     // Task 2.6

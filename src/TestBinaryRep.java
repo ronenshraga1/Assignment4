@@ -1,11 +1,12 @@
 public class TestBinaryRep {
     public static void main(String[] args) {
-        BinaryNumber bn3 = new BinaryNumber(3); // 011 (3)
-        BinaryNumber bn5 = new BinaryNumber(5); // 0101 (5)
-        BinaryNumber bn8 = new BinaryNumber(8); // 01000 (8)
-       // System.out.println(bn3.add(bn5)); // prints 01000 which is the
-        // minimal binary representation
-// of 8.
-        System.out.println(bn8.add(bn3)); // prints 01011 which is the
+        BinaryNumber bn1 = new BinaryNumber(68);
+        BinaryNumber bn2 = new BinaryNumber(3);
+        BinaryNumber bnM1 = bn1.negate();
+        BinaryNumber bnM2 = bn2.negate();
+
+        //System.out.println(bnM5);
+        System.out.println(bnM2.add(bnM1));
+        BinaryNumber bn8 = new BinaryNumber(8);
     }
 }

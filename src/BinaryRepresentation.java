@@ -133,7 +133,6 @@ public class BinaryRepresentation implements Iterable<Bit> {
     public void complement() {
         Iterator<Bit> iterator = this.bits.iterator();
         int i =0;
-        System.out.println(iterator);
         while (iterator.hasNext()){
             Bit value = iterator.next();
             this.bits.set(i,value.negate());
