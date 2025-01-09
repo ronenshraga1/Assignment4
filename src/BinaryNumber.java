@@ -118,7 +118,9 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
     // Assumes other is non-null BinaryNumber
     // Returns a new BinaryNumber containing the result of the subtraction of other from this (i.e. this - other)
     public BinaryNumber subtract(BinaryNumber other) {
-        throw new UnsupportedOperationException("Delete this line and implement the method.");
+        BinaryNumber copy = new BinaryNumber(other);
+        //copy.negate();
+        return add(copy.negate());
     }
 
     // Task 2.7
