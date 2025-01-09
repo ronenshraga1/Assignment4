@@ -197,7 +197,35 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
     // Returns a positive number if this object represents a number bigger than the one other represents,
     // 0 if they are equal, and a negative number if it is smaller.
     public int compareTo(BinaryNumber other) {
-        throw new UnsupportedOperationException("Delete this line and implement the method.");
+        if(other == null){
+            throw new IllegalArgumentException("NOT VALID VALUE");
+        }
+        BinaryNumber copy1 = new BinaryNumber(this);
+        BinaryNumber copy2 = new BinaryNumber(other);
+        
+        Iterator<Bit> iterator1 = copy1.rep.iterator();
+        Iterator<Bit> iterator2 = copy2.rep.iterator();
+        if(this.rep.length()>other.rep.length()){
+            other.rep.padding(this.rep.length());
+        } else if (other.rep.length()>this.rep.length()){
+            this.rep.padding(other.rep.length());
+        }
+        if(this.rep.getLast().toInt() <other.rep.getLast().toInt()){
+            return 1;
+        } else if (this.rep.getLast().toInt() >other.rep.getLast().toInt()){
+            return -1;
+        }
+        while (copy1.length() > 0){
+            if(copy1.rep.getLast().toInt() > copy2.rep.getLast().toInt()){
+                return 1;
+            } else if (copy2.rep.getLast().toInt() > copy1.rep.getLast().toInt()) {
+                return -1;
+            } else{
+                copy1.rep.removeLast();
+                copy2.rep.removeLast();
+            }
+        }
+        return 0;
     }
 
     // Task 2.9
