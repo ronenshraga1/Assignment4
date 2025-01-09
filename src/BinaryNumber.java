@@ -126,7 +126,13 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
     // Task 2.7
     // Returns 1 if the number represented by this object is positive, -1 if it negative and 0 if it equals 0
     public int signum() {
-        throw new UnsupportedOperationException("Delete this line and implement the method.");
+        if(this.rep.getLast() == Bit.ONE){
+            return -1;
+        } else if (this.rep.getLast() == Bit.ZERO && this.rep.length() == 1) {
+            return 0;
+        } else{
+            return 1;
+        }
     }
 
     // Task 2.10
