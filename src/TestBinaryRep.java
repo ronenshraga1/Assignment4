@@ -1,9 +1,12 @@
 public class TestBinaryRep {
     public static void main(String[] args) {
-        BinaryNumber bn5 = new BinaryNumber(5); // 0101 (5)
-        BinaryNumber bnM5 = bn5.negate(); // 1011 (-5)
-        BinaryNumber bn4 = new BinaryNumber(4); // 0100 (4)
-        BinaryNumber bnM20 = bnM5.multiply(bn4); // 101100 (-20)
-        System.out.println(bnM20.toInt()); // prints -20
+        BinaryNumber bn9 = new BinaryNumber(9); // 01001 (9)
+        BinaryNumber bnM9 = bn9.negate(); // 10111 (-9)
+        BinaryNumber bn3 = new BinaryNumber(4); // 011 (3)
+        BinaryNumber bn2 = new BinaryNumber(2); // 010 (2)
+        BinaryNumber bnM3 = bnM9.divide(bn3); // 101 (-3)
+        BinaryNumber bnM4 = bnM9.divide(bn2); // 1100 (-4)
+        System.out.println(bnM3.toInt()); // prints -3
+        System.out.println(bnM4.toInt()); // prints -4    }
     }
 }

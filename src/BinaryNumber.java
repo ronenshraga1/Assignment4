@@ -143,7 +143,6 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
     // Assumes other is non-null BinaryNumber which is positive
     // Returns a new BinaryNumber containing the result of the multiplication of other and this (i.e. this * other)
     private BinaryNumber multiplyPositive(BinaryNumber other){
-        // Base case: if multiplyMe is 0, return 0
         if (other.toInt() == 0) {
             return new BinaryNumber(0);
         }
@@ -185,12 +184,28 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
         }
 
     }
+    // assumes other and this are positive numbers
+    //Returns a new BinaryNumber containing the result of the division of other and this (i.e. this / other)
+    private BinaryNumber dividePositive(BinaryNumber divisor){
+        int number1 = this.toInt() > 0? this.toInt() : this.negate().toInt();
+        int convert = divisor.toInt() > 0? divisor.toInt() : divisor.negate().toInt();
+        return new BinaryNumber(number1 / convert);
+    }
 
     // Task 2.11
     // Assumes other is non-null BinaryNumber
     // Returns a new BinaryNumber containing the result of the integer-division of other from this (i.e. this / other)
     public BinaryNumber divide(BinaryNumber other) {
-        throw new UnsupportedOperationException("Delete this line and implement the method.");
+        if(other == null){
+            throw new IllegalArgumentException("not valid value");
+        }
+        boolean isPositive = (this.toInt() / other.toInt()) > 0 ? true :false;
+        if(isPositive){
+            return dividePositive(other);
+        } else{
+            BinaryNumber negative = dividePositive(other);
+            return negative.negate();
+        }
     }
 
     // Task 2.2
