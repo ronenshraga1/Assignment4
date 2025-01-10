@@ -65,27 +65,58 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
     // Assumes s is a string representing a valid number, either positive or negative
     // Initializes a BinaryNumber representing the number described in s
     public BinaryNumber(String s) {
-        BinaryNumber temp = null;
-        int i =0;
-        int result = 0;
-        boolean isNegative = false;
-        if (s.charAt(0) == '-') {
-            isNegative = true;
-            i = 1;
+        if (s == null || s.isEmpty()) {
+            throw new IllegalArgumentException("Input string is null or empty");
         }
-        while (i<s.length()){
-            int digit = s.charAt(i) - '0';
-            result = result *10 + digit;
-            i++;
+        boolean isNegative = s.charAt(0) == '-';
+        if (isNegative) {
+            s = s.substring(1);
         }
-        temp = new BinaryNumber(result);
 
+        BinaryNumber result = convertStringToBinary(s);
         if(isNegative){
-            this.rep = temp.negate().rep;
-        } else{
-            this.rep = temp.rep;
+            this.rep = result.negate().rep;
+        }else{
+            this.rep = result.rep;
         }
     }
+    private BinaryNumber convertStringToBinary(String s) {
+        BinaryRepresentation result = new BinaryRepresentation();
+
+        int[] digits = new int[s.length()];
+        for (int i = 0; i < s.length(); i++) {
+            digits[i] = s.charAt(i) - '0';
+        }
+        BinaryNumber binarynum = new BinaryNumber(0);
+        while (!isZero(digits)) {
+            binarynum.rep.addLast(divideByTwo(digits) ==1 ?Bit.ONE:Bit.ZERO);
+        }
+        binarynum.rep.removeFirst();
+        binarynum.rep.addLast(Bit.ZERO);
+        return binarynum;
+    }
+    // Divide the number by 2 and return the remainder
+    private static int divideByTwo(int[] digits) {
+        int remainder = 0;
+        for (int i = 0; i < digits.length; i++) {
+            int current = remainder * 10 + digits[i];
+            digits[i] = current / 2;
+            remainder = current % 2;
+        }
+        return remainder;
+    }
+    // Check if the number is zero
+    private static boolean isZero(int[] digits) {
+        for (int i=0;i<digits.length;i++) {
+            if (digits[i] !=0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+
 
     // Task 2.4
     // Assumes other is non-null BinaryNumber
