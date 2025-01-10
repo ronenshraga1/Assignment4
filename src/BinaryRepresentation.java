@@ -131,11 +131,9 @@ public class BinaryRepresentation implements Iterable<Bit> {
     // Task 1.6
     // Replaces each Bit in the representation with its negative
     public void complement() {
-        Iterator<Bit> iterator = this.bits.iterator();
         int i =0;
-        while (iterator.hasNext()){
-            Bit value = iterator.next();
-            this.bits.set(i,value.negate());
+        while (i<this.length()){
+            this.addLast(this.removeLast().negate());
             i++;
         }
     }
