@@ -86,9 +86,13 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
             i++;
         }
         b1.rep.removeFirst();
-        if(sum == Bit.ONE){
+        if(this.rep.getLast() == Bit.ZERO && other.rep.getLast() == Bit.ZERO){
+            b1.rep.addLast(Bit.ZERO);
+        } else if (this.rep.getLast() == Bit.ONE && other.rep.getLast() == Bit.ONE) {
             b1.rep.addLast(Bit.ONE);
-        } else{
+        }else if(sum == Bit.ONE){
+            b1.rep.addLast(Bit.ONE);
+        }else{
             b1.rep.addLast(Bit.ZERO);
         }
         b1.rep.reduce();
@@ -138,15 +142,48 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
     // Task 2.10
     // Assumes other is non-null BinaryNumber which is positive
     // Returns a new BinaryNumber containing the result of the multiplication of other and this (i.e. this * other)
-    private BinaryNumber multiplyPositive(BinaryNumber other) {
-        throw new UnsupportedOperationException("Delete this line and implement the method.");
+    private BinaryNumber multiplyPositive(BinaryNumber other){
+        // Base case: if multiplyMe is 0, return 0
+        if (other.toInt() == 0) {
+            return new BinaryNumber(0);
+        }
+        if (other.toInt() == 1) {
+            return this;
+        }
+        BinaryNumber halfMultiply = new BinaryNumber(other.toInt() / 2);
+        BinaryNumber halfValue = this.multiplyPositive(halfMultiply);
+        if (other.toInt() % 2 == 0) {
+            return halfValue.add(halfValue);
+        } else {
+            return halfValue.add(halfValue).add(this);
+        }
+
     }
 
     // Task 2.10
     // Assumes other is non-null BinaryNumber
     // Returns a new BinaryNumber containing the result of the multiplication of other and this (i.e. this * other)
     public BinaryNumber multiply(BinaryNumber other) {
-        throw new UnsupportedOperationException("Delete this line and implement the method.");
+        if(other.rep.getLast() == Bit.ONE || other == null){
+            throw new IllegalArgumentException("number is not positive");
+        }
+        boolean isNegative = this.signum() * other.signum() < 0;
+        BinaryNumber positiveCurrent = this;
+        BinaryNumber positiveOther = other;
+        if(this.signum() < 0){
+            positiveCurrent = this.negate();
+        }
+        if(other.signum() < 0){
+            positiveOther = other.negate();
+        }
+        BinaryNumber result = positiveCurrent.multiplyPositive(positiveOther);
+
+        if(isNegative){
+            return result.negate();
+        } else{
+            return result;
+        }
+
     }
 
     // Task 2.11
@@ -232,7 +269,30 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
     // Assumes this current number is small enough to be represented by an int
     // Returns the int value of the number represented by this
     public int toInt() {
-        throw new UnsupportedOperationException("Delete this line and implement the method.");
+        int multiplicationBy2 = 1;
+        BinaryNumber positiveBinary = new BinaryNumber(this);
+        int sum = 0;
+        int sign = signum();
+        if(sign == -1){
+            positiveBinary = negate();
+        } else if (sign == 0) {
+            return 0;
+        }
+        Iterator<Bit> iterator = positiveBinary.rep.iterator();
+        while (iterator.hasNext()){
+            Bit value = iterator.next();
+            if(value.equals(Bit.ONE)){
+                sum = sum + multiplicationBy2;
+            }
+            multiplicationBy2 = multiplicationBy2 * 2;
+        }
+        if(sum < 0){
+            throw new RuntimeException("number bigger than int");
+        } else if (sign == -1) {
+            sum = sum * -1;
+        }
+
+        return sum;
     }
 
     // Task 2.13
