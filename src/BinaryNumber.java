@@ -10,7 +10,33 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
         if(n<0){
             throw new IllegalArgumentException("not valid number");
         }
-    BinaryRepresentation newBinary = new BinaryRepresentation();
+//    BinaryRepresentation newBinary = new BinaryRepresentation();
+//        int length =  calculateLog(n);
+//        int number = (1 << (length - 1));
+//        if(n==0){
+//            length =1;
+//        }
+//        for(int i =0;i<length;i++){
+//            if(n>=number){
+//                newBinary.addFirst(Bit.ONE);
+//                n = n -(int)number;
+//            } else{
+//                newBinary.addFirst(Bit.ZERO);
+//            }
+//            number = number/2;
+//        }
+        this.rep = buildBinary(n);
+    }
+    private int calculateLog(int value){
+        int count = 0;
+        while (value>0){
+            value /= 2;
+            count++;
+        }
+        return count + 1;
+    }
+    private BinaryRepresentation buildBinary(int n){
+        BinaryRepresentation newBinary = new BinaryRepresentation();
         int length =  calculateLog(n);
         int number = (1 << (length - 1));
         if(n==0){
@@ -25,16 +51,9 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
             }
             number = number/2;
         }
-        this.rep = newBinary;
+        return  newBinary;
     }
-    private int calculateLog(int value){
-        int count = 0;
-        while (value>0){
-            value /= 2;
-            count++;
-        }
-        return count + 1;
-    }
+
 
     // Assumes other is a non-null BinaryNumber
     // Initializes a copy of other
@@ -46,7 +65,26 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
     // Assumes s is a string representing a valid number, either positive or negative
     // Initializes a BinaryNumber representing the number described in s
     public BinaryNumber(String s) {
-        throw new UnsupportedOperationException("Delete this line and implement the method.");
+        BinaryNumber temp = null;
+        int i =0;
+        int result = 0;
+        boolean isNegative = false;
+        if (s.charAt(0) == '-') {
+            isNegative = true;
+            i = 1;
+        }
+        while (i<s.length()){
+            int digit = s.charAt(i) - '0';
+            result = result *10 + digit;
+            i++;
+        }
+        temp = new BinaryNumber(result);
+
+        if(isNegative){
+            this.rep = temp.negate().rep;
+        } else{
+            this.rep = temp.rep;
+        }
     }
 
     // Task 2.4
