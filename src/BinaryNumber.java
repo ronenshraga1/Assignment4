@@ -388,24 +388,22 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
            binaryPresentInt = negate();
             isNegative = true;
         }
-        String decimalValue = "0";
+        String decimal = "0";
         String base = "1";
         Iterator<Bit> iterator = binaryPresentInt.rep.iterator();
         for (int i = binaryPresentInt.length() - 1; i >= 0; i--) {
             if (iterator.next().equals(Bit.ONE)) {
-                decimalValue = addStrings(decimalValue, base);
+                decimal = addStrings(decimal, base);
             }
             base = multiplyByTwoWithCarry(base);
         }
         if(isNegative){
-            decimalValue = '-' + decimalValue;
+            decimal = '-' + decimal;
         }
-        return decimalValue;
+        return decimal;
 
     }
-    // credit to this source i used to solve this mission:
-    // https://github.com/qqian2/JavaAlgorithmImplement/blob/7d3a56a8c3dbf507db31c94a7abb98dad9ab60e5/src/com/string/easy/AddStrings.java
-    //Given two non-negative integers num1 and num2 represented as string, return the sum of num1 and num2
+    // returns the sum of num1 and num2
     private String addStrings(String num1, String num2) {
         String result = "";
         int carry = 0;
