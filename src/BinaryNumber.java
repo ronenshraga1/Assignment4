@@ -207,7 +207,6 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
     // Assumes other is non-null BinaryNumber which is positive
     // Returns a new BinaryNumber containing the result of the multiplication of other and this (i.e. this * other)
     private BinaryNumber multiplyPositive(BinaryNumber other){
-        // Base case: If other is zero, return zero
         if (other.rep.length() == 1 && other.rep.getFirst().equals(Bit.ZERO)) {
             return new BinaryNumber(0);
         }
@@ -227,7 +226,7 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
     // Assumes other is non-null BinaryNumber
     // Returns a new BinaryNumber containing the result of the multiplication of other and this (i.e. this * other)
     public BinaryNumber multiply(BinaryNumber other) {
-        if(other.rep.getLast() == Bit.ONE || other == null){
+        if(other == null || other.rep.getLast() == Bit.ONE){
             throw new IllegalArgumentException("number is not positive");
         }
         boolean isNegative = this.signum() * other.signum() < 0;
@@ -251,35 +250,31 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
     // assumes other and this are positive numbers
     //Returns a new BinaryNumber containing the result of the division of other and this (i.e. this / other)
     private BinaryNumber dividePositive(BinaryNumber divisor){
-        if (divisor == null || divisor.signum() <= 0) {
-            throw new IllegalArgumentException("not positive binary");
+        if (this.compareTo(divisor) < 0) {
+            return new BinaryNumber(0);
         }
-        BinaryNumber quotient = new BinaryNumber(0);
-        BinaryNumber subtractor = new BinaryNumber(this);
-        while (subtractor.compareTo(divisor) >= 0) {
-            subtractor = subtractor.subtract(divisor);
-            quotient = quotient.add(new BinaryNumber(1));
+        BinaryNumber halfdivide = this.divideBy2();
+        BinaryNumber halfPortion = halfdivide.dividePositive(divisor);
+        BinaryNumber fullPortion = halfPortion.multiplyBy2();
+        BinaryNumber remainder = this.subtract(fullPortion.multiply(divisor));
+        if (remainder.compareTo(divisor) >= 0) {
+            fullPortion = fullPortion.add(new BinaryNumber(1));
         }
-        return quotient;
+        return fullPortion;
     }
+
 
     // Task 2.11
     // Assumes other is non-null BinaryNumber
     // Returns a new BinaryNumber containing the result of the integer-division of other from this (i.e. this / other)
     public BinaryNumber divide(BinaryNumber other) {
         if (other == null || other.signum() == 0) {
-            throw new IllegalArgumentException("Divisor cannot be null or zero.");
+            throw new IllegalArgumentException("divisor is null or o");
         }
-
-        // Handle signs
         boolean isNegative = this.signum() * other.signum() < 0;
         BinaryNumber positiveDividend = this.signum() < 0 ? this.negate() : this;
         BinaryNumber positiveDivisor = other.signum() < 0 ? other.negate() : other;
-
-        // Perform the division using long division
         BinaryNumber result = positiveDividend.dividePositive(positiveDivisor);
-
-        // Adjust the sign of the result
         return isNegative ? result.negate() : result;
     }
 
@@ -411,7 +406,7 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
 
         return reverseString(result).toString();
     }
-    // multipies a string representing a number by 2 and handlinbg carry
+    // returns a string representing a number multiplied  by 2
     private String multiplyByTwoWithCarry(String num) {
         String result = "";
         int carry = 0;
