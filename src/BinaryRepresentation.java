@@ -138,6 +138,7 @@ public class BinaryRepresentation implements Iterable<Bit> {
             this.bits.set(i,value.negate());
             i++;
         }
+        this.numOfOnes = this.bits.size() - this.numOfOnes;
     }
 
     // Task 1.7

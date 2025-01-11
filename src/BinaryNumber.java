@@ -390,6 +390,7 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
     }
     // credit to this source i used to solve this mission:
     // https://github.com/qqian2/JavaAlgorithmImplement/blob/7d3a56a8c3dbf507db31c94a7abb98dad9ab60e5/src/com/string/easy/AddStrings.java
+    //Given two non-negative integers num1 and num2 represented as string, return the sum of num1 and num2
     private String addStrings(String num1, String num2) {
         String result = "";
         int carry = 0;
@@ -420,11 +421,9 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
             result+=(product % 10);
             carry = product / 10;
         }
-
         if (carry != 0) {
             result+=(carry);
         }
-
         return reverseString(result);
     }
     //recieves string and reverses it from end to start
@@ -436,40 +435,6 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
         return reversedString;
 
     }
-
-    // Helper function to add 1 to the decimal array
-    private void addOneToArray(int[] result) {
-        int carry = 1;
-        for (int i = 0; i < result.length; i++) {
-            int current = result[i] + carry;
-            result[i] = current % 10;
-            carry = current / 10;
-            if (carry == 0) {
-                break;
-            }
-        }
-        if (carry > 0) {
-            extendArray(result, carry);
-        }
-    }
-
-    // Helper function to extend the decimal array
-    private void extendArray(int[] result, int carry) {
-        int[] newResult = new int[result.length + 1];
-        System.arraycopy(result, 0, newResult, 0, result.length);
-        newResult[result.length] = carry;
-        result = newResult;
-    }
-    // Helper function to convert the array to a string
-    private String arrayToString(int[] result) {
-        StringBuilder builder = new StringBuilder();
-        for (int i = result.length - 1; i >= 0; i--) {
-            builder.append(result[i]);
-        }
-        return builder.toString();
-    }
-
-
     /*
      * =================================================================
      *              Don't change the following functions:
