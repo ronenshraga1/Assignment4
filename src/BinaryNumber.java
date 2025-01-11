@@ -27,6 +27,7 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
 //        }
         this.rep = buildBinary(n);
     }
+    // recieves int and return the log of the value
     private int calculateLog(int value){
         int count = 0;
         while (value>0){
@@ -35,6 +36,7 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
         }
         return count + 1;
     }
+    // recevies number and returns the BinaryRepresentation of the number
     private BinaryRepresentation buildBinary(int n){
         BinaryRepresentation newBinary = new BinaryRepresentation();
         int length =  calculateLog(n);
@@ -66,7 +68,7 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
     // Initializes a BinaryNumber representing the number described in s
     public BinaryNumber(String s) {
         if (s == null || s.isEmpty()) {
-            throw new IllegalArgumentException("Input string is null or empty");
+            throw new IllegalArgumentException("string is null or empty");
         }
         boolean isNegative = s.charAt(0) == '-';
         if (isNegative) {
@@ -80,6 +82,7 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
             this.rep = result.rep;
         }
     }
+    // receives string representing a number and returns a binaryNumber representing it
     private BinaryNumber convertStringToBinary(String s) {
         int[] digits = new int[s.length()];
         for (int i = 0; i < s.length(); i++) {
@@ -87,13 +90,17 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
         }
         BinaryNumber binarynum = new BinaryNumber(0);
         while (!isZero(digits)) {
-            binarynum.rep.addLast(divideByTwoWithRemainder(digits) ==1 ?Bit.ONE:Bit.ZERO);
+            if (divideByTwoWithRemainder(digits) == 1) {
+                binarynum.rep.addLast(Bit.ONE);
+            } else {
+                binarynum.rep.addLast(Bit.ZERO);
+            }
         }
         binarynum.rep.removeFirst();
         binarynum.rep.addLast(Bit.ZERO);
         return binarynum;
     }
-    // Divide the number by 2 and return the remainder
+    // divide the number by 2 and return the remainder
     private static int divideByTwoWithRemainder(int[] digits) {
         int remainder = 0;
         for (int i = 0; i < digits.length; i++) {
@@ -103,7 +110,7 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
         }
         return remainder;
     }
-    // Check if the number is zero
+    // checks if the numbers in the array are zero and returns true if they are all 0
     private static boolean isZero(int[] digits) {
         for (int i=0;i<digits.length;i++) {
             if (digits[i] !=0) {
@@ -121,9 +128,7 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
             throw new IllegalArgumentException("not valid argument");
         }
         BinaryNumber b1 = new BinaryNumber(0);
-        //b1.rep.padding(this.rep.length()+other.rep.length());
         int i =0;
-        //Iterator<Bit> sumbit = b1.rep.iterator();
         Bit carry = Bit.ZERO;
         Bit sum = Bit.ZERO;
         if(this.rep.length()>other.rep.length()){
@@ -239,7 +244,6 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
             positiveOther = other.negate();
         }
         BinaryNumber result = positiveCurrent.multiplyPositive(positiveOther);
-
         if(isNegative){
             return result.negate();
         } else{
@@ -256,8 +260,8 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
         BinaryNumber halfdivide = this.divideBy2();
         BinaryNumber halfPortion = halfdivide.dividePositive(divisor);
         BinaryNumber fullPortion = halfPortion.multiplyBy2();
-        BinaryNumber remainder = this.subtract(fullPortion.multiply(divisor));
-        if (remainder.compareTo(divisor) >= 0) {
+        BinaryNumber carry = this.subtract(fullPortion.multiply(divisor));
+        if (carry.compareTo(divisor) >= 0) {
             fullPortion = fullPortion.add(new BinaryNumber(1));
         }
         return fullPortion;
@@ -272,10 +276,26 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
             throw new IllegalArgumentException("divisor is null or o");
         }
         boolean isNegative = this.signum() * other.signum() < 0;
-        BinaryNumber positiveDividend = this.signum() < 0 ? this.negate() : this;
-        BinaryNumber positiveDivisor = other.signum() < 0 ? other.negate() : other;
-        BinaryNumber result = positiveDividend.dividePositive(positiveDivisor);
-        return isNegative ? result.negate() : result;
+        BinaryNumber dividend;
+        if (this.signum() < 0) {
+            dividend = this.negate();
+        } else {
+            dividend = this;
+        }
+
+        BinaryNumber divisor;
+        if (other.signum() < 0) {
+            divisor = other.negate();
+        } else {
+            divisor = other;
+        }
+        BinaryNumber result = dividend.dividePositive(divisor);
+        if (isNegative) {
+            return result.negate();
+        } else {
+            return result;
+        }
+
     }
 
     // Task 2.2
@@ -393,15 +413,24 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
         int index2 = num2.length() - 1;
 
         while (index >= 0 || index2 >= 0 || carry != 0) {
-            int digit1 = index >= 0 ? num1.charAt(index) - '0' : 0;
-            int digit2 = index2 >= 0 ? num2.charAt(index2) - '0' : 0;
-
+            int digit1;
+            if (index >= 0) {
+                digit1 = num1.charAt(index) - '0';
+            } else {
+                digit1 = 0;
+            }
+            int digit2;
+            if (index2 >= 0) {
+                digit2 = num2.charAt(index2) - '0';
+            } else {
+                digit2 = 0;
+            }
             int sum = digit1 + digit2 + carry;
             result= result + (sum % 10);
             carry = sum / 10;
 
-            index--;
-            index2--;
+            index = index-1;
+            index2= index2-1;
         }
 
         return reverseString(result).toString();
