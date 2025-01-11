@@ -1,8 +1,8 @@
 public class TestBinaryRep {
     public static void main(String[] args) {
-        BinaryNumber bn25 = new BinaryNumber("25"); // 011001 (25)
-        BinaryNumber bnM25 = new BinaryNumber("-25"); // 100111 (-25)
-        System.out.println(bn25.toInt()); // prints 25
-        System.out.println(bnM25.toInt()); // prints -25
-    }
+        BinaryNumber bn9 = new BinaryNumber("-9"); // 01001
+        System.out.println(bn9.toInt()); // prints 9
+        BinaryNumber fib100 = new BinaryNumber("-354224848179261915075");
+//0100110011001111011011011101101010011111000101100101001011111111000011
+        System.out.println(fib100.toIntString());    }
 }
