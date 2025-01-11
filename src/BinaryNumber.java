@@ -74,7 +74,6 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
         if (isNegative) {
             s = s.substring(1);
         }
-
         BinaryNumber result = convertStringToBinary(s);
         if(isNegative){
             this.rep = result.negate().rep;
@@ -437,7 +436,6 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
     private String multiplyByTwoWithCarry(String num) {
         String result = "";
         int carry = 0;
-
         for (int i = num.length() - 1; i >= 0; i--) {
             int currentDigit = num.charAt(i) - '0';
             int product = currentDigit * 2 + carry;
@@ -456,7 +454,6 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
             reversedString += s.charAt(s.length() -i -1);
         }
         return reversedString;
-
     }
     /*
      * =================================================================
