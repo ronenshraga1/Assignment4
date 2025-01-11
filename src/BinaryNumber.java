@@ -38,7 +38,7 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
     private BinaryRepresentation buildBinary(int n){
         BinaryRepresentation newBinary = new BinaryRepresentation();
         int length =  calculateLog(n);
-        int number = (1 << (length - 1));
+        long number = (1L << (length - 1));
         if(n==0){
             length =1;
         }
@@ -336,7 +336,7 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
     public int toInt() {
         int multiplicationBy2 = 1;
         BinaryNumber positiveBinary = new BinaryNumber(this);
-        int sum = 0;
+        long sum = 0;
         int sign = signum();
         if(sign == -1){
             positiveBinary = negate();
@@ -351,13 +351,13 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
             }
             multiplicationBy2 = multiplicationBy2 * 2;
         }
-        if(sum < 0){
+        if(sum > Integer.MAX_VALUE || sum < Integer.MIN_VALUE){
             throw new RuntimeException("number bigger than int");
         } else if (sign == -1) {
             sum = sum * -1;
         }
 
-        return sum;
+        return (int)sum;
     }
 
     // Task 2.13
@@ -394,23 +394,24 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
     private String addStrings(String num1, String num2) {
         String result = "";
         int carry = 0;
-        int p1 = num1.length() - 1;
-        int p2 = num2.length() - 1;
+        int index = num1.length() - 1;
+        int index2 = num2.length() - 1;
 
-        while (p1 >= 0 || p2 >= 0 || carry != 0) {
-            int x1 = p1 >= 0 ? num1.charAt(p1) - '0' : 0;
-            int x2 = p2 >= 0 ? num2.charAt(p2) - '0' : 0;
+        while (index >= 0 || index2 >= 0 || carry != 0) {
+            int digit1 = index >= 0 ? num1.charAt(index) - '0' : 0;
+            int digit2 = index2 >= 0 ? num2.charAt(index2) - '0' : 0;
 
-            int sum = x1 + x2 + carry;
+            int sum = digit1 + digit2 + carry;
             result= result + (sum % 10);
             carry = sum / 10;
 
-            p1--;
-            p2--;
+            index--;
+            index2--;
         }
 
         return reverseString(result).toString();
     }
+    // multipies a string representing a number by 2 and handlinbg carry
     private String multiplyByTwoWithCarry(String num) {
         String result = "";
         int carry = 0;
