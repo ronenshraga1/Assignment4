@@ -10,21 +10,6 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
         if(n<0){
             throw new IllegalArgumentException("not valid number");
         }
-//    BinaryRepresentation newBinary = new BinaryRepresentation();
-//        int length =  calculateLog(n);
-//        int number = (1 << (length - 1));
-//        if(n==0){
-//            length =1;
-//        }
-//        for(int i =0;i<length;i++){
-//            if(n>=number){
-//                newBinary.addFirst(Bit.ONE);
-//                n = n -(int)number;
-//            } else{
-//                newBinary.addFirst(Bit.ZERO);
-//            }
-//            number = number/2;
-//        }
         this.rep = buildBinary(n);
     }
     // recieves int and return the log of the value
