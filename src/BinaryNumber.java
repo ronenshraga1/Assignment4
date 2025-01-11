@@ -212,20 +212,20 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
     // Assumes other is non-null BinaryNumber which is positive
     // Returns a new BinaryNumber containing the result of the multiplication of other and this (i.e. this * other)
     private BinaryNumber multiplyPositive(BinaryNumber other){
-        if (other.toInt() == 0) {
+        // Base case: If other is zero, return zero
+        if (other.rep.length() == 1 && other.rep.getFirst().equals(Bit.ZERO)) {
             return new BinaryNumber(0);
         }
-        if (other.toInt() == 1) {
+        if (other.rep.length() == 1 && other.rep.getFirst().equals(Bit.ONE)) {
             return this;
         }
-        BinaryNumber halfMultiply = new BinaryNumber(other.toInt() / 2);
-        BinaryNumber halfValue = this.multiplyPositive(halfMultiply);
-        if (other.toInt() % 2 == 0) {
-            return halfValue.add(halfValue);
-        } else {
-            return halfValue.add(halfValue).add(this);
+        BinaryNumber halfOther = other.divideBy2();
+        BinaryNumber halfProduct = this.multiplyPositive(halfOther);
+        BinaryNumber result = halfProduct.multiplyBy2();
+        if (other.rep.getFirst().equals(Bit.ONE)) {
+            result = result.add(this);
         }
-
+        return result;
     }
 
     // Task 2.10
@@ -256,25 +256,36 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
     // assumes other and this are positive numbers
     //Returns a new BinaryNumber containing the result of the division of other and this (i.e. this / other)
     private BinaryNumber dividePositive(BinaryNumber divisor){
-        int number1 = this.toInt() > 0? this.toInt() : this.negate().toInt();
-        int convert = divisor.toInt() > 0? divisor.toInt() : divisor.negate().toInt();
-        return new BinaryNumber(number1 / convert);
+        if (divisor == null || divisor.signum() <= 0) {
+            throw new IllegalArgumentException("not positive binary");
+        }
+        BinaryNumber quotient = new BinaryNumber(0);
+        BinaryNumber subtractor = new BinaryNumber(this);
+        while (subtractor.compareTo(divisor) >= 0) {
+            subtractor = subtractor.subtract(divisor);
+            quotient = quotient.add(new BinaryNumber(1));
+        }
+        return quotient;
     }
 
     // Task 2.11
     // Assumes other is non-null BinaryNumber
     // Returns a new BinaryNumber containing the result of the integer-division of other from this (i.e. this / other)
     public BinaryNumber divide(BinaryNumber other) {
-        if(other == null){
-            throw new IllegalArgumentException("not valid value");
+        if (other == null || other.signum() == 0) {
+            throw new IllegalArgumentException("Divisor cannot be null or zero.");
         }
-        boolean isPositive = (this.toInt() / other.toInt()) > 0 ? true :false;
-        if(isPositive){
-            return dividePositive(other);
-        } else{
-            BinaryNumber negative = dividePositive(other);
-            return negative.negate();
-        }
+
+        // Handle signs
+        boolean isNegative = this.signum() * other.signum() < 0;
+        BinaryNumber positiveDividend = this.signum() < 0 ? this.negate() : this;
+        BinaryNumber positiveDivisor = other.signum() < 0 ? other.negate() : other;
+
+        // Perform the division using long division
+        BinaryNumber result = positiveDividend.dividePositive(positiveDivisor);
+
+        // Adjust the sign of the result
+        return isNegative ? result.negate() : result;
     }
 
     // Task 2.2
@@ -319,34 +330,9 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
     // 0 if they are equal, and a negative number if it is smaller.
     public int compareTo(BinaryNumber other) {
         if(other == null){
-            throw new IllegalArgumentException("NOT VALID VALUE");
+            throw new IllegalArgumentException("not valid binary number");
         }
-        BinaryNumber copy1 = new BinaryNumber(this);
-        BinaryNumber copy2 = new BinaryNumber(other);
-        
-        Iterator<Bit> iterator1 = copy1.rep.iterator();
-        Iterator<Bit> iterator2 = copy2.rep.iterator();
-        if(this.rep.length()>other.rep.length()){
-            other.rep.padding(this.rep.length());
-        } else if (other.rep.length()>this.rep.length()){
-            this.rep.padding(other.rep.length());
-        }
-        if(this.rep.getLast().toInt() <other.rep.getLast().toInt()){
-            return 1;
-        } else if (this.rep.getLast().toInt() >other.rep.getLast().toInt()){
-            return -1;
-        }
-        while (copy1.length() > 0){
-            if(copy1.rep.getLast().toInt() > copy2.rep.getLast().toInt()){
-                return 1;
-            } else if (copy2.rep.getLast().toInt() > copy1.rep.getLast().toInt()) {
-                return -1;
-            } else{
-                copy1.rep.removeLast();
-                copy2.rep.removeLast();
-            }
-        }
-        return 0;
+        return this.subtract(other).signum();
     }
 
     // Task 2.9
@@ -386,9 +372,91 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
         if (!isLegal()) {
             throw new IllegalArgumentException("Illegal Number");
         }
+        String decimalValue = "0";
+        String base = "1";
+        Iterator<Bit> iterator = this.rep.iterator();
+        for (int i = this.length() - 1; i >= 0; i--) {
+            if (iterator.next().equals(Bit.ONE)) {
+                decimalValue = addStrings(decimalValue, base);
+            }
+            base = multiplyByTwo(base);
+        }
 
-        throw new UnsupportedOperationException("Delete this line and implement the method.");
+        return decimalValue;
+
     }
+    // credit to this source i used to solve this mission:
+    // https://github.com/qqian2/JavaAlgorithmImplement/blob/7d3a56a8c3dbf507db31c94a7abb98dad9ab60e5/src/com/string/easy/AddStrings.java
+    public static String addStrings(String num1, String num2) {
+        StringBuilder result = new StringBuilder();
+        int carry = 0;
+        int p1 = num1.length() - 1;
+        int p2 = num2.length() - 1;
+
+        while (p1 >= 0 || p2 >= 0 || carry != 0) {
+            int x1 = p1 >= 0 ? num1.charAt(p1) - '0' : 0;
+            int x2 = p2 >= 0 ? num2.charAt(p2) - '0' : 0;
+
+            int sum = x1 + x2 + carry;
+            result.append(sum % 10);
+            carry = sum / 10;
+
+            p1--;
+            p2--;
+        }
+
+        return result.reverse().toString();
+    }
+    public static String multiplyByTwo(String num) {
+        StringBuilder result = new StringBuilder();
+        int carry = 0;
+
+        for (int i = num.length() - 1; i >= 0; i--) {
+            int currentDigit = num.charAt(i) - '0';
+            int product = currentDigit * 2 + carry;
+            result.append(product % 10);
+            carry = product / 10;
+        }
+
+        if (carry != 0) {
+            result.append(carry);
+        }
+
+        return result.reverse().toString();
+    }
+
+    // Helper function to add 1 to the decimal array
+    private void addOneToArray(int[] result) {
+        int carry = 1;
+        for (int i = 0; i < result.length; i++) {
+            int current = result[i] + carry;
+            result[i] = current % 10;
+            carry = current / 10;
+            if (carry == 0) {
+                break;
+            }
+        }
+        if (carry > 0) {
+            extendArray(result, carry);
+        }
+    }
+
+    // Helper function to extend the decimal array
+    private void extendArray(int[] result, int carry) {
+        int[] newResult = new int[result.length + 1];
+        System.arraycopy(result, 0, newResult, 0, result.length);
+        newResult[result.length] = carry;
+        result = newResult;
+    }
+    // Helper function to convert the array to a string
+    private String arrayToString(int[] result) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = result.length - 1; i >= 0; i--) {
+            builder.append(result[i]);
+        }
+        return builder.toString();
+    }
+
 
     /*
      * =================================================================
