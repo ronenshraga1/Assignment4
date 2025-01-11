@@ -81,22 +81,20 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
         }
     }
     private BinaryNumber convertStringToBinary(String s) {
-        BinaryRepresentation result = new BinaryRepresentation();
-
         int[] digits = new int[s.length()];
         for (int i = 0; i < s.length(); i++) {
             digits[i] = s.charAt(i) - '0';
         }
         BinaryNumber binarynum = new BinaryNumber(0);
         while (!isZero(digits)) {
-            binarynum.rep.addLast(divideByTwo(digits) ==1 ?Bit.ONE:Bit.ZERO);
+            binarynum.rep.addLast(divideByTwoWithRemainder(digits) ==1 ?Bit.ONE:Bit.ZERO);
         }
         binarynum.rep.removeFirst();
         binarynum.rep.addLast(Bit.ZERO);
         return binarynum;
     }
     // Divide the number by 2 and return the remainder
-    private static int divideByTwo(int[] digits) {
+    private static int divideByTwoWithRemainder(int[] digits) {
         int remainder = 0;
         for (int i = 0; i < digits.length; i++) {
             int current = remainder * 10 + digits[i];
@@ -114,9 +112,6 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
         }
         return true;
     }
-
-
-
 
     // Task 2.4
     // Assumes other is non-null BinaryNumber
@@ -372,23 +367,31 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
         if (!isLegal()) {
             throw new IllegalArgumentException("Illegal Number");
         }
+        boolean isNegative = false;
+        BinaryNumber binaryPresentInt = new BinaryNumber(this);
+        if(signum() == -1){
+           binaryPresentInt = negate();
+            isNegative = true;
+        }
         String decimalValue = "0";
         String base = "1";
-        Iterator<Bit> iterator = this.rep.iterator();
-        for (int i = this.length() - 1; i >= 0; i--) {
+        Iterator<Bit> iterator = binaryPresentInt.rep.iterator();
+        for (int i = binaryPresentInt.length() - 1; i >= 0; i--) {
             if (iterator.next().equals(Bit.ONE)) {
                 decimalValue = addStrings(decimalValue, base);
             }
-            base = multiplyByTwo(base);
+            base = multiplyByTwoWithCarry(base);
         }
-
+        if(isNegative){
+            decimalValue = '-' + decimalValue;
+        }
         return decimalValue;
 
     }
     // credit to this source i used to solve this mission:
     // https://github.com/qqian2/JavaAlgorithmImplement/blob/7d3a56a8c3dbf507db31c94a7abb98dad9ab60e5/src/com/string/easy/AddStrings.java
-    public static String addStrings(String num1, String num2) {
-        StringBuilder result = new StringBuilder();
+    private String addStrings(String num1, String num2) {
+        String result = "";
         int carry = 0;
         int p1 = num1.length() - 1;
         int p2 = num2.length() - 1;
@@ -398,31 +401,40 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
             int x2 = p2 >= 0 ? num2.charAt(p2) - '0' : 0;
 
             int sum = x1 + x2 + carry;
-            result.append(sum % 10);
+            result= result + (sum % 10);
             carry = sum / 10;
 
             p1--;
             p2--;
         }
 
-        return result.reverse().toString();
+        return reverseString(result).toString();
     }
-    public static String multiplyByTwo(String num) {
-        StringBuilder result = new StringBuilder();
+    private String multiplyByTwoWithCarry(String num) {
+        String result = "";
         int carry = 0;
 
         for (int i = num.length() - 1; i >= 0; i--) {
             int currentDigit = num.charAt(i) - '0';
             int product = currentDigit * 2 + carry;
-            result.append(product % 10);
+            result+=(product % 10);
             carry = product / 10;
         }
 
         if (carry != 0) {
-            result.append(carry);
+            result+=(carry);
         }
 
-        return result.reverse().toString();
+        return reverseString(result);
+    }
+    //recieves string and reverses it from end to start
+    private String reverseString(String s){
+        String reversedString = "";
+        for(int i =0;i<s.length();i++){
+            reversedString += s.charAt(s.length() -i -1);
+        }
+        return reversedString;
+
     }
 
     // Helper function to add 1 to the decimal array
